@@ -1,0 +1,96 @@
+v2
+
+
+import string
+
+def read_file(filename):
+    with open(filename, 'r', encoding='utf-8') as f:
+        text = f.read()
+    return text
+
+def clean_text(text):
+    allowed_chars = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя '
+    cleaned_text = ''.join([char for char in text if char in allowed_chars])
+    return cleaned_text
+
+def count_chars(text):
+    char_freqs_with_space = {}
+    char_freqs_no_space = {}
+    total_chars_with_space = 0
+    total_chars_no_space = 0
+
+    for char in text:
+        if char != ' ':
+            total_chars_no_space += 1
+            if char in char_freqs_no_space:
+                char_freqs_no_space[char] += 1
+            else:
+                char_freqs_no_space[char] = 1
+        total_chars_with_space += 1
+        if char in char_freqs_with_space:
+            char_freqs_with_space[char] += 1
+        else:
+            char_freqs_with_space[char] = 1
+
+    char_freqs_with_space = {char: freq/total_chars_with_space for char, freq in char_freqs_with_space.items()}
+    char_freqs_no_space = {char: freq/total_chars_no_space for char, freq in char_freqs_no_space.items()}
+
+    return char_freqs_with_space, char_freqs_no_space
+
+def count_bigrams(text):
+    bigram_freqs_with_space = {}
+    bigram_freqs_no_space = {}
+    total_bigrams_with_space = 0
+    total_bigrams_no_space = 0
+
+    for i in range(len(text)-1):
+        bigram = text[i:i+2]
+        if bigram[0] != ' ' and bigram[1] != ' ':
+            total_bigrams_no_space += 1
+            if bigram in bigram_freqs_no_space:
+                bigram_freqs_no_space[bigram] += 1
+            else:
+                bigram_freqs_no_space[bigram] = 1
+        total_bigrams_with_space += 1
+        if bigram in bigram_freqs_with_space:
+            bigram_freqs_with_space[bigram] += 1
+        else:
+            bigram_freqs_with_space[bigram] = 1
+
+    bigram_freqs_with_space = {bigram: freq/total_bigrams_with_space for bigram, freq in bigram_freqs_with_space.items()}
+    bigram_freqs_no_space = {bigram: freq/total_bigrams_no_space for bigram, freq in bigram_freqs_no_space.items()}
+
+    return bigram_freqs_with_space, bigram_freqs_no_space
+
+filename = 'D:\pk\pplicate.txt'
+text = read_file(filename)
+cleaned_text = clean_text(text)
+
+char_freqs_with_space, char_freqs_no_space = count_chars(cleaned_text)
+bigram_freqs_with_space, bigram_freqs_no_space = count_bigrams(cleaned_text)
+
+print("Частоты символов с учетом пробелов:")
+for char, freq in char_freqs_with_space.items():
+    print(f"{char}: {freq:.4f}")
+
+print("Частоты символов без пробелов:")
+for char, freq in char_freqs_no_space.items():
+    print(f"{char}: {freq:.4f}")
+
+print("Частоты биграмм с учетом пробелов, биграммы с пересечением:")
+for bigram, freq in bigram_freqs_with_space.items():
+    print(f"{bigram}: {freq:.4f}")
+
+print("Частоты биграмм с учетом пробелов, биграммы без пересечения:")
+for bigram, freq in bigram_freqs_with_space.items():
+    if ' ' not in bigram:
+        print(f"{bigram}: {freq:.4f}")
+
+print("Частоты биграмм без пробелов, биграммы с пересечением:")
+for bigram, freq in bigram_freqs_no_space.items():
+    print(f"{bigram}: {freq:.4f}")
+
+print("Частоты биграмм без пробелов, биграммы без пересечения:")
+for bigram, freq in bigram_freqs_no_space.items():
+    if ' ' not in bigram:
+        print(f"{bigram}: {freq:.4f}")
